@@ -16,6 +16,9 @@ git checkout develop
 - Node 20+
 - Токен бота (`@BotFather`), HTTPS-домен
 
+Если `npm install` падает на правах к `~/.npm`, поставь зависимости так:  
+`npm install --cache ./.npm-cache` (каталог `.npm-cache` в `.gitignore`).
+
 ## Быстрый старт (локально)
 
 ```bash
