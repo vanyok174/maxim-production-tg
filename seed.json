@@ -1,0 +1,279 @@
+{
+  "employees": [
+    {
+      "name": "Рузалина",
+      "productivity": 180.0
+    },
+    {
+      "name": "Дима",
+      "productivity": 180.0
+    },
+    {
+      "name": "Альбина",
+      "productivity": 150.0
+    },
+    {
+      "name": "Неля",
+      "productivity": 280.0
+    },
+    {
+      "name": "Кристина",
+      "productivity": 220.0
+    },
+    {
+      "name": "Руфина",
+      "productivity": 0
+    },
+    {
+      "name": "Лиза",
+      "productivity": 0
+    }
+  ],
+  "articles": [
+    {
+      "name": "500OBNIMI",
+      "payPerUnit": 20.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "500OBNIMI",
+      "avgDailySales": 1854.0
+    },
+    {
+      "name": "500-BONBON",
+      "payPerUnit": 20.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "500-BONBON",
+      "avgDailySales": 1626.0
+    },
+    {
+      "name": "500-HALAL",
+      "payPerUnit": 20.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "500-HALAL",
+      "avgDailySales": 1309.0
+    },
+    {
+      "name": "500SLIPLOS-500",
+      "payPerUnit": 20.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "500SLIPLOS-500",
+      "avgDailySales": 905.0
+    },
+    {
+      "name": "500-CDR-midle",
+      "payPerUnit": 20.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "500-CDR-midle",
+      "avgDailySales": 844.0
+    },
+    {
+      "name": "BOX-900OBNIMI",
+      "payPerUnit": 42.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "BOX-900OBNIMI",
+      "avgDailySales": 393.0
+    },
+    {
+      "name": "500-LIMON",
+      "payPerUnit": 20.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "500-LIMON",
+      "avgDailySales": 385.0
+    },
+    {
+      "name": "500-MIX",
+      "payPerUnit": 20.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "500-MIX",
+      "avgDailySales": 495.0
+    },
+    {
+      "name": "900-CDR",
+      "payPerUnit": 42.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "900-CDR",
+      "avgDailySales": 221.0
+    },
+    {
+      "name": "500-KISLO-MIX",
+      "payPerUnit": 20.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "500-KISLO-MIX",
+      "avgDailySales": 141.0
+    },
+    {
+      "name": "BOX-900MIR",
+      "payPerUnit": 42.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "BOX-900MIR",
+      "avgDailySales": 51.0
+    },
+    {
+      "name": "500JUI",
+      "payPerUnit": 15.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "500JUI",
+      "avgDailySales": 77.0
+    },
+    {
+      "name": "LENTA200",
+      "payPerUnit": 20.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "LENTA200",
+      "avgDailySales": 93.0
+    },
+    {
+      "name": "500-NY",
+      "payPerUnit": 20.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "500-NY",
+      "avgDailySales": 64.0
+    },
+    {
+      "name": "500-MARM",
+      "payPerUnit": 20.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "500-MARM",
+      "avgDailySales": 58.0
+    },
+    {
+      "name": "2-DOIPACK",
+      "payPerUnit": 30.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "2-DOIPACK",
+      "avgDailySales": 83.0
+    },
+    {
+      "name": "500-DED",
+      "payPerUnit": 20.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "500-DED",
+      "avgDailySales": 44.0
+    },
+    {
+      "name": "LENTA500",
+      "payPerUnit": 20.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "LENTA500",
+      "avgDailySales": 29.0
+    },
+    {
+      "name": "200-OBNIMI",
+      "payPerUnit": 15.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "200-OBNIMI",
+      "avgDailySales": 33.0
+    },
+    {
+      "name": "200-MISHKA",
+      "payPerUnit": 15.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "200-MISHKA",
+      "avgDailySales": 28.0
+    },
+    {
+      "name": "900-mishka",
+      "payPerUnit": 42.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "900-mishka",
+      "avgDailySales": 9.0
+    },
+    {
+      "name": "BOX-900LOVE",
+      "payPerUnit": 42.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "BOX-900LOVE",
+      "avgDailySales": 8.0
+    },
+    {
+      "name": "200-JUI",
+      "payPerUnit": 15.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "200-JUI",
+      "avgDailySales": 19.0
+    },
+    {
+      "name": "500LOVE",
+      "payPerUnit": 23.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "500LOVE",
+      "avgDailySales": 8.0
+    },
+    {
+      "name": "200-SLIPLOS",
+      "payPerUnit": 15.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "200-SLIPLOS",
+      "avgDailySales": 11.0
+    },
+    {
+      "name": "BOX-900JUI",
+      "payPerUnit": 42.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "BOX-900JUI",
+      "avgDailySales": 4.0
+    },
+    {
+      "name": "200-LOVE",
+      "payPerUnit": 15.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "200-LOVE",
+      "avgDailySales": 9.0
+    },
+    {
+      "name": "BOX-900SLIPLOS",
+      "payPerUnit": 42.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "BOX-900SLIPLOS",
+      "avgDailySales": 3.0
+    },
+    {
+      "name": "500-mishka+lenta",
+      "payPerUnit": 20.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "500-mishka+lenta",
+      "avgDailySales": 4.0
+    },
+    {
+      "name": "KROLIK-500",
+      "payPerUnit": 20.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "KROLIK-500",
+      "avgDailySales": 4.0
+    },
+    {
+      "name": "1KG-MED",
+      "payPerUnit": 42.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "1KG-MED",
+      "avgDailySales": 2.0
+    },
+    {
+      "name": "500FROG",
+      "payPerUnit": 20.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "500FROG",
+      "avgDailySales": 3.0
+    },
+    {
+      "name": "500DEDsLENTOY",
+      "payPerUnit": 20.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "500DEDsLENTOY",
+      "avgDailySales": 2.0
+    },
+    {
+      "name": "500-HALLOWEEN",
+      "payPerUnit": 20.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "500-HALLOWEEN",
+      "avgDailySales": 1.0
+    },
+    {
+      "name": "200-HALLOWEEN",
+      "payPerUnit": 15.0,
+      "planFbsPerDay": 0,
+      "wbSupplierArticle": "200-HALLOWEEN",
+      "avgDailySales": 1.0
+    }
+  ]
+}

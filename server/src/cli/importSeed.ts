@@ -16,6 +16,7 @@ const data = JSON.parse(raw) as {
     payPerUnit?: number;
     planFbsPerDay?: number;
     wbSupplierArticle?: string;
+    avgDailySales?: number | null;
   }[];
 };
 
@@ -27,12 +28,13 @@ const upEmp = db.prepare(
    ON CONFLICT(name) DO UPDATE SET productivity_per_day = excluded.productivity_per_day`,
 );
 const upArt = db.prepare(
-  `INSERT INTO articles (name, pay_per_unit, plan_fbs_per_day, wb_supplier_article)
-   VALUES (@name, @pay, @plan, @wb)
+  `INSERT INTO articles (name, pay_per_unit, plan_fbs_per_day, wb_supplier_article, avg_daily_sales)
+   VALUES (@name, @pay, @plan, @wb, @avg)
    ON CONFLICT(name) DO UPDATE SET
      pay_per_unit = excluded.pay_per_unit,
      plan_fbs_per_day = excluded.plan_fbs_per_day,
-     wb_supplier_article = COALESCE(excluded.wb_supplier_article, articles.wb_supplier_article)`,
+     wb_supplier_article = COALESCE(excluded.wb_supplier_article, articles.wb_supplier_article),
+     avg_daily_sales = COALESCE(excluded.avg_daily_sales, articles.avg_daily_sales)`,
 );
 
 const tx = db.transaction(() => {
@@ -49,6 +51,7 @@ const tx = db.transaction(() => {
       pay: Number(a.payPerUnit) || 0,
       plan: Number(a.planFbsPerDay) || 0,
       wb: a.wbSupplierArticle ? String(a.wbSupplierArticle).trim() : null,
+      avg: typeof a.avgDailySales === 'number' ? a.avgDailySales : null,
     });
   }
 });

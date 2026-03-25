@@ -40,8 +40,8 @@ npm run dev
 
 1. В `.env` (корень) и `client/.env`:
 
-   `PUBLIC_BASE_PATH=/prod-uchet/`  
-   `VITE_BASE_PATH=/prod-uchet/`
+   `PUBLIC_BASE_PATH=/mxprod/`  
+   `VITE_BASE_PATH=/mxprod/`
 
 2. `npm run build` — клиент соберётся в `client/dist`, сервер в `server/dist`.
 
@@ -50,8 +50,8 @@ npm run dev
 4. **Nginx** — сайт на `/`, приложение на префиксе:
 
 ```nginx
-location /prod-uchet/ {
-    proxy_pass http://127.0.0.1:3847/prod-uchet/;
+location /mxprod/ {
+    proxy_pass http://127.0.0.1:3847/mxprod/;
     proxy_http_version 1.1;
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
@@ -60,17 +60,19 @@ location /prod-uchet/ {
 }
 ```
 
-5. В BotFather → Bot → Web App: URL `https://твой-домен.ru/prod-uchet/` (со слэшем в конце по желанию — главное совпадение с `PUBLIC_BASE_PATH`).
+5. В BotFather → Bot → Web App: URL `https://твой-домен.ru/mxprod/` (со слэшем в конце по желанию — главное совпадение с `PUBLIC_BASE_PATH`).
 
 ## Импорт из таблицы
 
 Пока: JSON как в `seed.example.json` или выгрузка в такой формат. Команда:
 
 ```bash
-npm run import-seed -- /path/to/seed.json
+npm run import-seed -w server -- ../seed.json
+# или с абсолютным путём:
+# npm run import-seed -w server -- /path/to/seed.json
 ```
 
-Или после деплоя: `POST /prod-uchet/api/admin/import` (тело как в seed, только админ из `ADMIN_TELEGRAM_IDS` + валидный `initData`).
+Или после деплоя: `POST /mxprod/api/admin/import` (тело как в seed, только админ из `ADMIN_TELEGRAM_IDS` + валидный `initData`).
 
 ## Wildberries
 
