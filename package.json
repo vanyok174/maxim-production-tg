@@ -1,0 +1,15 @@
+{
+  "name": "maxim-production-tg",
+  "private": true,
+  "description": "Telegram Mini App: учёт сборки (Максим). API + SQLite + WB статистика.",
+  "workspaces": ["server", "client"],
+  "scripts": {
+    "dev": "concurrently -n api,web \"npm run dev -w server\" \"npm run dev -w client\"",
+    "build": "npm run build -w client && npm run build -w server",
+    "start": "npm run start -w server",
+    "import-seed": "npm run import-seed -w server"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

@@ -1,0 +1,11 @@
+node_modules/
+.npm-cache/
+dist/
+data/
+.env
+.env.localdev
+*.db
+.DS_Store
+*.log
+.idea/
+.vscode/

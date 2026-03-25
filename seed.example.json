@@ -1,0 +1,20 @@
+{
+  "employees": [
+    { "name": "Алексей", "productivity": 80 },
+    { "name": "Мария", "productivity": 100 }
+  ],
+  "articles": [
+    {
+      "name": "ART-001",
+      "payPerUnit": 50,
+      "planFbsPerDay": 10,
+      "wbSupplierArticle": "ART-001"
+    },
+    {
+      "name": "ART-002",
+      "payPerUnit": 75,
+      "planFbsPerDay": 8,
+      "wbSupplierArticle": "ART-002"
+    }
+  ]
+}
