@@ -179,7 +179,7 @@ function AssemblyScreen({ employees, articles }: { employees: Employee[]; articl
         </div>
 
         {lines.map((line, i) => (
-          <div key={i} className="assembly-line">
+          <div key={i} className={`assembly-line ${lines.length === 1 ? 'no-delete' : ''}`}>
             <select
               value={line.articleName}
               onChange={(e) => setLines((prev) => prev.map((p, j) => j === i ? { ...p, articleName: e.target.value } : p))}

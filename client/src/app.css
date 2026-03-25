@@ -129,8 +129,9 @@ button.full-width {
 
 /* Form grids */
 .form-row {
-  display: flex;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
   margin-bottom: 12px;
 }
 
@@ -139,8 +140,8 @@ button.full-width {
 }
 
 .field {
-  flex: 1 1 0;
   min-width: 0;
+  overflow: hidden;
 }
 
 .field > label {
@@ -152,47 +153,36 @@ button.full-width {
 .field > input {
   display: block;
   width: 100%;
+  box-sizing: border-box;
 }
 
 .assembly-line {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 80px 40px;
   gap: 8px;
   margin-bottom: 10px;
 }
 
-.assembly-line > select {
-  flex: 1;
-  min-width: 0;
+.assembly-line.no-delete {
+  grid-template-columns: 1fr 80px;
 }
 
+.assembly-line > select,
 .assembly-line > input {
-  flex: 0 0 80px;
   min-width: 0;
-}
-
-.assembly-line > button {
-  flex: 0 0 auto;
 }
 
 .add-form {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 80px 40px;
   gap: 8px;
   margin-bottom: 12px;
+  align-items: end;
 }
 
-.add-form > *:first-child {
-  flex: 1;
+.add-form > div {
   min-width: 0;
-}
-
-.add-form > *:nth-child(2) {
-  flex: 0 0 80px;
-  min-width: 0;
-}
-
-.add-form > button {
-  flex: 0 0 auto;
-  align-self: flex-end;
+  overflow: hidden;
 }
 
 .btn-row {
