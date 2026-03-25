@@ -156,12 +156,12 @@ function AssemblyScreen({ employees, articles }: { employees: Employee[]; articl
       {ok && <p className="ok">{ok}</p>}
 
       <div className="card">
-        <div className="row2">
-          <div>
+        <div className="form-row">
+          <div className="field">
             <label>Дата</label>
             <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
           </div>
-          <div>
+          <div className="field">
             <label>Сотрудник</label>
             <select value={employee} onChange={(e) => setEmployee(e.target.value)}>
               {employees.map((x) => (
@@ -265,12 +265,12 @@ function AssembliesTab() {
 
   return (
     <div className="card">
-      <div className="row2">
-        <div>
+      <div className="form-row">
+        <div className="field">
           <label>С</label>
           <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
         </div>
-        <div>
+        <div className="field">
           <label>По</label>
           <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
         </div>
@@ -570,26 +570,28 @@ function ShipmentsScreen({ articles }: { articles: Article[] }) {
       <h1>Поставки</h1>
 
       <div className="card">
-        <div className="form-grid-4">
-          <div>
+        <div className="form-row">
+          <div className="field">
             <label>Тип</label>
             <select value={type} onChange={(e) => setType(e.target.value)}>
               <option value="FBO">FBO</option>
               <option value="FBS">FBS</option>
             </select>
           </div>
-          <div>
+          <div className="field">
             <label>Артикул</label>
             <select value={article} onChange={(e) => setArticle(e.target.value)}>
               <option value="">—</option>
               {articles.map((a) => <option key={a.id} value={a.name}>{a.name}</option>)}
             </select>
           </div>
-          <div>
+        </div>
+        <div className="form-row">
+          <div className="field">
             <label>Дата</label>
             <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
           </div>
-          <div>
+          <div className="field">
             <label>Кол-во</label>
             <input type="number" value={qty} onChange={(e) => setQty(e.target.value)} placeholder="шт" />
           </div>
@@ -693,12 +695,12 @@ function DashboardScreen() {
       {tab === 'salaries' && (
         <>
           <div className="card">
-            <div className="row2">
-              <div>
+            <div className="form-row">
+              <div className="field">
                 <label>С</label>
                 <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
               </div>
-              <div>
+              <div className="field">
                 <label>По</label>
                 <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
               </div>
