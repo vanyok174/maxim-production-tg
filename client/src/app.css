@@ -119,16 +119,27 @@ button.small {
 
 .row2 {
   display: grid;
-  grid-template-columns: 1fr 100px;
-  gap: 8px;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
   align-items: end;
 }
 
 .row3 {
   display: grid;
-  grid-template-columns: 1fr 1fr 80px;
-  gap: 8px;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
   align-items: end;
+}
+
+.form-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+button.full-width {
+  width: 100%;
 }
 
 .err { color: var(--danger); font-size: 0.9rem; white-space: pre-wrap; margin: 8px 0; }
@@ -266,6 +277,12 @@ th {
 
 tr:last-child td { border-bottom: none; }
 
+table.compact th,
+table.compact td {
+  padding: 6px 4px;
+  font-size: 0.8rem;
+}
+
 .text-right { text-align: right; }
 .text-center { text-align: center; }
 
@@ -358,15 +375,24 @@ tr:last-child td { border-bottom: none; }
 .inline-form > * { flex: 1; }
 .inline-form > button { flex: none; }
 
-.stock-details {
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid var(--border);
+.btn-row {
+  display: flex;
+  gap: 8px;
 }
 
-.stock-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 4px 0;
-  font-size: 0.85rem;
+.btn-row button {
+  flex: 1;
+}
+
+.assembly-line {
+  display: grid;
+  grid-template-columns: 1fr 80px auto;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.assembly-line select,
+.assembly-line input {
+  margin-bottom: 0;
 }

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
   apiGet, apiPost, apiPatch, apiDelete,
-  Employee, Article, Assembly, Shipment, SalaryRow, ForecastDay, ArticleSummary, Stock,
+  Employee, Article, Assembly, Shipment, SalaryRow, ForecastDay, ArticleSummary,
 } from './api';
 
 type Screen = 'assembly' | 'records' | 'shipments' | 'articles' | 'dashboard' | 'settings';
@@ -144,6 +144,11 @@ function AssemblyScreen({ employees, articles }: { employees: Employee[]; articl
     }
   };
 
+  const removeLine = (i: number) => {
+    if (lines.length === 1) return;
+    setLines((prev) => prev.filter((_, j) => j !== i));
+  };
+
   return (
     <>
       <h1>Ввод сборки</h1>
@@ -151,54 +156,55 @@ function AssemblyScreen({ employees, articles }: { employees: Employee[]; articl
       {ok && <p className="ok">{ok}</p>}
 
       <div className="card">
-        <label>Дата</label>
-        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+        <div className="row2">
+          <div>
+            <label>Дата</label>
+            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+          </div>
+          <div>
+            <label>Сотрудник</label>
+            <select value={employee} onChange={(e) => setEmployee(e.target.value)}>
+              {employees.map((x) => (
+                <option key={x.id} value={x.name}>{x.name}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
 
-        <label>Сотрудник</label>
-        <select value={employee} onChange={(e) => setEmployee(e.target.value)}>
-          {employees.map((x) => (
-            <option key={x.id} value={x.name}>{x.name}</option>
-          ))}
-        </select>
-
-        <h2>Артикулы</h2>
-        <div className="list">
-          {lines.map((line, i) => (
-            <div key={i} className="row2">
-              <div>
-                <select
-                  value={line.articleName}
-                  onChange={(e) => setLines((prev) => prev.map((p, j) => j === i ? { ...p, articleName: e.target.value } : p))}
-                >
-                  <option value="">Выберите артикул</option>
-                  {articles.map((a) => (
-                    <option key={a.id} value={a.name}>
-                      {a.name} ({a.pay_per_unit}₽)
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <input
-                  type="number"
-                  placeholder="Кол-во"
-                  min={1}
-                  value={line.qty}
-                  onChange={(e) => setLines((prev) => prev.map((p, j) => j === i ? { ...p, qty: e.target.value } : p))}
-                />
-              </div>
-            </div>
-          ))}
+      <div className="card">
+        <div className="card-header">
+          <span className="card-title">Артикулы</span>
+          <button className="small secondary" onClick={() => setLines((prev) => [...prev, { articleName: '', qty: '' }])}>+ Строка</button>
         </div>
 
-        <div className="actions">
-          <button className="secondary" onClick={() => setLines((prev) => [...prev, { articleName: '', qty: '' }])}>
-            + Строка
-          </button>
-          <button disabled={loading} onClick={submit}>
-            {loading ? 'Сохранение...' : 'Сохранить'}
-          </button>
-        </div>
+        {lines.map((line, i) => (
+          <div key={i} className="assembly-line">
+            <select
+              value={line.articleName}
+              onChange={(e) => setLines((prev) => prev.map((p, j) => j === i ? { ...p, articleName: e.target.value } : p))}
+            >
+              <option value="">Артикул</option>
+              {articles.map((a) => (
+                <option key={a.id} value={a.name}>{a.name}</option>
+              ))}
+            </select>
+            <input
+              type="number"
+              placeholder="Кол-во"
+              min={1}
+              value={line.qty}
+              onChange={(e) => setLines((prev) => prev.map((p, j) => j === i ? { ...p, qty: e.target.value } : p))}
+            />
+            {lines.length > 1 && (
+              <button className="small danger" onClick={() => removeLine(i)}>✕</button>
+            )}
+          </div>
+        ))}
+
+        <button className="full-width" disabled={loading} onClick={submit}>
+          {loading ? 'Сохранение...' : 'Сохранить'}
+        </button>
       </div>
     </>
   );
@@ -259,7 +265,7 @@ function AssembliesTab() {
 
   return (
     <div className="card">
-      <div className="row2" style={{ marginBottom: 12 }}>
+      <div className="row2">
         <div>
           <label>С</label>
           <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
@@ -275,20 +281,20 @@ function AssembliesTab() {
       {!loading && assemblies.length === 0 && (
         <div className="empty-state">
           <div className="empty-state-icon">📦</div>
-          <p>Нет записей за период</p>
+          <p>Нет записей</p>
         </div>
       )}
 
       {!loading && assemblies.length > 0 && (
         <div className="table-wrap">
-          <table>
+          <table className="compact">
             <thead>
               <tr>
                 <th>Дата</th>
-                <th>Сотрудник</th>
+                <th>Сотр.</th>
                 <th>Артикул</th>
-                <th className="text-right">Кол-во</th>
-                <th className="text-right">Сумма</th>
+                <th className="text-right">Шт</th>
+                <th className="text-right">₽</th>
                 <th className="text-center">✓</th>
                 <th></th>
               </tr>
@@ -300,7 +306,7 @@ function AssembliesTab() {
                   <td>{a.employee_name}</td>
                   <td>{a.article_name}</td>
                   <td className="text-right">{a.qty}</td>
-                  <td className="text-right">{a.amount?.toFixed(0)}₽</td>
+                  <td className="text-right">{a.amount?.toFixed(0)}</td>
                   <td className="text-center">
                     <input
                       type="checkbox"
@@ -421,23 +427,17 @@ function ArticlesTab({ articles, onChange }: { articles: Article[]; onChange: ()
 // ============== ARTICLES SUMMARY SCREEN ==============
 function ArticlesSummaryScreen() {
   const [articles, setArticles] = useState<ArticleSummary[]>([]);
-  const [stocks, setStocks] = useState<Stock[]>([]);
   const [loading, setLoading] = useState(false);
   const [syncLoading, setSyncLoading] = useState(false);
   const [stockSyncLoading, setStockSyncLoading] = useState(false);
   const [ok, setOk] = useState('');
   const [err, setErr] = useState('');
-  const [expanded, setExpanded] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [artRes, stockRes] = await Promise.all([
-        apiGet<{ articles: ArticleSummary[] }>('articles-summary'),
-        apiGet<{ stocks: Stock[] }>('stocks'),
-      ]);
-      setArticles(artRes.articles);
-      setStocks(stockRes.stocks);
+      const r = await apiGet<{ articles: ArticleSummary[] }>('articles-summary');
+      setArticles(r.articles);
     } finally {
       setLoading(false);
     }
@@ -451,7 +451,7 @@ function ArticlesSummaryScreen() {
     setOk('');
     try {
       const r = await apiPost<{ articlesUpdated: number; lookbackDays: number }>('admin/sync-wb-sales');
-      setOk(`Продажи: обновлено ${r.articlesUpdated} артикулов`);
+      setOk(`Продажи: ${r.articlesUpdated} арт.`);
       load();
     } catch (e) {
       setErr(e instanceof Error ? e.message : String(e));
@@ -466,7 +466,7 @@ function ArticlesSummaryScreen() {
     setOk('');
     try {
       const r = await apiPost<{ updated: number; total: number }>('admin/sync-wb-stocks');
-      setOk(`Остатки: обновлено ${r.updated} записей`);
+      setOk(`Остатки: ${r.updated} зап.`);
       load();
     } catch (e) {
       setErr(e instanceof Error ? e.message : String(e));
@@ -475,8 +475,6 @@ function ArticlesSummaryScreen() {
     }
   };
 
-  const getStocksForArticle = (name: string) => stocks.filter((s) => s.article_name === name);
-
   return (
     <>
       <h1>Артикулы</h1>
@@ -484,24 +482,17 @@ function ArticlesSummaryScreen() {
       {ok && <p className="ok">{ok}</p>}
 
       <div className="card">
-        <div className="card-header">
-          <span className="card-title">Синхронизация WB</span>
-        </div>
-        <div className="actions">
+        <div className="btn-row">
           <button className="secondary" disabled={syncLoading} onClick={syncSales}>
-            {syncLoading ? 'Загрузка...' : 'Обновить продажи'}
+            {syncLoading ? '...' : 'Продажи WB'}
           </button>
-          <button disabled={stockSyncLoading} onClick={syncStocks}>
-            {stockSyncLoading ? 'Загрузка...' : 'Обновить остатки'}
+          <button className="secondary" disabled={stockSyncLoading} onClick={syncStocks}>
+            {stockSyncLoading ? '...' : 'Остатки WB'}
           </button>
         </div>
       </div>
 
       <div className="card">
-        <div className="card-header">
-          <span className="card-title">FBS / Продажи / Остатки</span>
-        </div>
-
         {loading && <p className="muted">Загрузка...</p>}
 
         {!loading && articles.length === 0 && (
@@ -512,42 +503,27 @@ function ArticlesSummaryScreen() {
         )}
 
         {!loading && articles.length > 0 && (
-          <div className="list">
-            {articles.map((a) => {
-              const artStocks = getStocksForArticle(a.name);
-              const isExpanded = expanded === a.name;
-              return (
-                <div key={a.id} className="list-item" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
-                  <div
-                    style={{ display: 'flex', justifyContent: 'space-between', cursor: artStocks.length ? 'pointer' : 'default' }}
-                    onClick={() => artStocks.length && setExpanded(isExpanded ? null : a.name)}
-                  >
-                    <div className="list-item-main">
-                      <div className="list-item-title">{a.name}</div>
-                      <div className="list-item-sub">
-                        FBS: <strong>{a.plan_fbs_per_day}</strong>/день •
-                        Продажи: <strong>{a.avg_daily_sales != null ? a.avg_daily_sales.toFixed(1) : '—'}</strong>/день •
-                        Остаток: <strong>{a.total_stock}</strong> шт
-                      </div>
-                    </div>
-                    {artStocks.length > 0 && (
-                      <span style={{ color: 'var(--hint-color)', fontSize: 12 }}>{isExpanded ? '▼' : '▶'}</span>
-                    )}
-                  </div>
-
-                  {isExpanded && artStocks.length > 0 && (
-                    <div className="stock-details">
-                      {artStocks.map((s, i) => (
-                        <div key={i} className="stock-row">
-                          <span className="muted">{s.warehouse_name}</span>
-                          <span>{s.quantity} шт</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Артикул</th>
+                  <th className="text-right">FBS</th>
+                  <th className="text-right">Прод.</th>
+                  <th className="text-right">Ост.</th>
+                </tr>
+              </thead>
+              <tbody>
+                {articles.map((a) => (
+                  <tr key={a.id}>
+                    <td>{a.name}</td>
+                    <td className="text-right">{a.plan_fbs_per_day}</td>
+                    <td className="text-right">{a.avg_daily_sales != null ? a.avg_daily_sales.toFixed(0) : '—'}</td>
+                    <td className="text-right">{a.total_stock}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
@@ -594,12 +570,19 @@ function ShipmentsScreen({ articles }: { articles: Article[] }) {
       <h1>Поставки</h1>
 
       <div className="card">
-        <div className="row3">
+        <div className="form-grid-4">
           <div>
             <label>Тип</label>
             <select value={type} onChange={(e) => setType(e.target.value)}>
               <option value="FBO">FBO</option>
               <option value="FBS">FBS</option>
+            </select>
+          </div>
+          <div>
+            <label>Артикул</label>
+            <select value={article} onChange={(e) => setArticle(e.target.value)}>
+              <option value="">—</option>
+              {articles.map((a) => <option key={a.id} value={a.name}>{a.name}</option>)}
             </select>
           </div>
           <div>
@@ -611,55 +594,46 @@ function ShipmentsScreen({ articles }: { articles: Article[] }) {
             <input type="number" value={qty} onChange={(e) => setQty(e.target.value)} placeholder="шт" />
           </div>
         </div>
-        <div className="inline-form">
-          <div>
-            <label>Артикул</label>
-            <select value={article} onChange={(e) => setArticle(e.target.value)}>
-              <option value="">Выберите</option>
-              {articles.map((a) => <option key={a.id} value={a.name}>{a.name}</option>)}
-            </select>
-          </div>
-          <button onClick={add}>Добавить</button>
-        </div>
+        <button className="full-width" onClick={add} disabled={!article || !qty}>Добавить поставку</button>
       </div>
 
       <div className="card">
-        <div className="card-header">
-          <span className="card-title">Ближайшие поставки</span>
-        </div>
-
         {loading && <p className="muted">Загрузка...</p>}
 
         {!loading && shipments.length === 0 && (
           <div className="empty-state">
             <div className="empty-state-icon">🚚</div>
-            <p>Нет запланированных поставок</p>
+            <p>Нет поставок</p>
           </div>
         )}
 
         {!loading && shipments.length > 0 && (
-          <div className="list">
-            {shipments.map((s) => {
-              const pct = s.qty > 0 ? Math.min(100, (s.collected / s.qty) * 100) : 0;
-              const color = pct >= 100 ? 'success' : pct >= 50 ? 'warning' : 'danger';
-              return (
-                <div key={s.id} className="list-item" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <div>
-                      <span className={`badge ${s.shipment_type === 'FBO' ? 'info' : 'warning'}`}>{s.shipment_type}</span>
-                      <strong style={{ marginLeft: 8 }}>{s.article_name}</strong>
-                    </div>
-                    <button className="small danger" onClick={() => remove(s.id)}>✕</button>
-                  </div>
-                  <div className="muted" style={{ marginTop: 4 }}>
-                    {formatDate(s.shipment_date)} • {s.collected}/{s.qty} шт
-                  </div>
-                  <div className="progress-bar">
-                    <div className={`progress-bar-fill ${color}`} style={{ width: `${pct}%` }} />
-                  </div>
-                </div>
-              );
-            })}
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Тип</th>
+                  <th>Артикул</th>
+                  <th>Дата</th>
+                  <th className="text-right">Прогресс</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {shipments.map((s) => {
+                  const pct = s.qty > 0 ? Math.min(100, (s.collected / s.qty) * 100) : 0;
+                  return (
+                    <tr key={s.id}>
+                      <td><span className={`badge ${s.shipment_type === 'FBO' ? 'info' : 'warning'}`}>{s.shipment_type}</span></td>
+                      <td>{s.article_name}</td>
+                      <td>{formatDate(s.shipment_date)}</td>
+                      <td className="text-right">{s.collected}/{s.qty} ({pct.toFixed(0)}%)</td>
+                      <td><button className="small danger" onClick={() => remove(s.id)}>✕</button></td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
