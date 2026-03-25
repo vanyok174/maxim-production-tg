@@ -51,6 +51,35 @@ export function initDb(): Database.Database {
 
     CREATE INDEX IF NOT EXISTS idx_assemblies_date ON assemblies(assembly_date);
     CREATE INDEX IF NOT EXISTS idx_assemblies_employee ON assemblies(employee_name);
+
+    CREATE TABLE IF NOT EXISTS settings (
+      key TEXT PRIMARY KEY,
+      value TEXT,
+      updated_at TEXT DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS shipments (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      shipment_type TEXT NOT NULL CHECK(shipment_type IN ('FBO', 'FBS')),
+      shipment_date TEXT NOT NULL,
+      article_name TEXT NOT NULL,
+      qty REAL NOT NULL,
+      collected REAL DEFAULT 0,
+      status TEXT DEFAULT 'pending',
+      created_at TEXT DEFAULT (datetime('now'))
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_shipments_date ON shipments(shipment_date);
+
+    CREATE TABLE IF NOT EXISTS schedule (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      employee_name TEXT NOT NULL,
+      work_date TEXT NOT NULL,
+      is_working INTEGER NOT NULL DEFAULT 1,
+      UNIQUE(employee_name, work_date)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_schedule_date ON schedule(work_date);
   `);
 
   return _db;
