@@ -86,3 +86,18 @@ export type ForecastDay = {
   canProduce: number;
   needed: number;
 };
+export type ArticleSummary = {
+  id: number;
+  name: string;
+  pay_per_unit: number;
+  plan_fbs_per_day: number;
+  avg_daily_sales: number | null;
+  wb_synced_at: string | null;
+  total_stock: number;
+};
+export type Stock = {
+  article_name: string;
+  warehouse_name: string;
+  quantity: number;
+  updated_at: string;
+};

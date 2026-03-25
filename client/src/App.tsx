@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
   apiGet, apiPost, apiPatch, apiDelete,
-  Employee, Article, Assembly, Shipment, SalaryRow, ForecastDay,
+  Employee, Article, Assembly, Shipment, SalaryRow, ForecastDay, ArticleSummary, Stock,
 } from './api';
 
-type Screen = 'assembly' | 'records' | 'shipments' | 'dashboard' | 'settings';
+type Screen = 'assembly' | 'records' | 'shipments' | 'articles' | 'dashboard' | 'settings';
 
 function todayISO() {
   const d = new Date();
@@ -57,6 +57,9 @@ export default function App() {
       {screen === 'shipments' && (
         <ShipmentsScreen articles={articles} />
       )}
+      {screen === 'articles' && (
+        <ArticlesSummaryScreen />
+      )}
       {screen === 'dashboard' && (
         <DashboardScreen />
       )}
@@ -68,6 +71,7 @@ export default function App() {
         <NavItem icon={IconPlus} label="Сборка" active={screen === 'assembly'} onClick={() => setScreen('assembly')} />
         <NavItem icon={IconList} label="Записи" active={screen === 'records'} onClick={() => setScreen('records')} />
         <NavItem icon={IconTruck} label="Поставки" active={screen === 'shipments'} onClick={() => setScreen('shipments')} />
+        <NavItem icon={IconBox} label="Артикулы" active={screen === 'articles'} onClick={() => setScreen('articles')} />
         <NavItem icon={IconChart} label="Отчёт" active={screen === 'dashboard'} onClick={() => setScreen('dashboard')} />
         <NavItem icon={IconGear} label="Настройки" active={screen === 'settings'} onClick={() => setScreen('settings')} />
       </nav>
@@ -92,6 +96,9 @@ function IconList() {
 }
 function IconTruck() {
   return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z" /><circle cx="5.5" cy="18.5" r="2.5" /><circle cx="18.5" cy="18.5" r="2.5" /></svg>;
+}
+function IconBox() {
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" /><polyline points="3.27 6.96 12 12.01 20.73 6.96" /><line x1="12" y1="22.08" x2="12" y2="12" /></svg>;
 }
 function IconChart() {
   return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 20V10M12 20V4M6 20v-6" /></svg>;
@@ -408,6 +415,143 @@ function ArticlesTab({ articles, onChange }: { articles: Article[]; onChange: ()
         ))}
       </div>
     </div>
+  );
+}
+
+// ============== ARTICLES SUMMARY SCREEN ==============
+function ArticlesSummaryScreen() {
+  const [articles, setArticles] = useState<ArticleSummary[]>([]);
+  const [stocks, setStocks] = useState<Stock[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [syncLoading, setSyncLoading] = useState(false);
+  const [stockSyncLoading, setStockSyncLoading] = useState(false);
+  const [ok, setOk] = useState('');
+  const [err, setErr] = useState('');
+  const [expanded, setExpanded] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [artRes, stockRes] = await Promise.all([
+        apiGet<{ articles: ArticleSummary[] }>('articles-summary'),
+        apiGet<{ stocks: Stock[] }>('stocks'),
+      ]);
+      setArticles(artRes.articles);
+      setStocks(stockRes.stocks);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const syncSales = async () => {
+    setSyncLoading(true);
+    setErr('');
+    setOk('');
+    try {
+      const r = await apiPost<{ articlesUpdated: number; lookbackDays: number }>('admin/sync-wb-sales');
+      setOk(`Продажи: обновлено ${r.articlesUpdated} артикулов`);
+      load();
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : String(e));
+    } finally {
+      setSyncLoading(false);
+    }
+  };
+
+  const syncStocks = async () => {
+    setStockSyncLoading(true);
+    setErr('');
+    setOk('');
+    try {
+      const r = await apiPost<{ updated: number; total: number }>('admin/sync-wb-stocks');
+      setOk(`Остатки: обновлено ${r.updated} записей`);
+      load();
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : String(e));
+    } finally {
+      setStockSyncLoading(false);
+    }
+  };
+
+  const getStocksForArticle = (name: string) => stocks.filter((s) => s.article_name === name);
+
+  return (
+    <>
+      <h1>Артикулы</h1>
+      {err && <p className="err">{err}</p>}
+      {ok && <p className="ok">{ok}</p>}
+
+      <div className="card">
+        <div className="card-header">
+          <span className="card-title">Синхронизация WB</span>
+        </div>
+        <div className="actions">
+          <button className="secondary" disabled={syncLoading} onClick={syncSales}>
+            {syncLoading ? 'Загрузка...' : 'Обновить продажи'}
+          </button>
+          <button disabled={stockSyncLoading} onClick={syncStocks}>
+            {stockSyncLoading ? 'Загрузка...' : 'Обновить остатки'}
+          </button>
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="card-header">
+          <span className="card-title">FBS / Продажи / Остатки</span>
+        </div>
+
+        {loading && <p className="muted">Загрузка...</p>}
+
+        {!loading && articles.length === 0 && (
+          <div className="empty-state">
+            <div className="empty-state-icon">📦</div>
+            <p>Нет артикулов</p>
+          </div>
+        )}
+
+        {!loading && articles.length > 0 && (
+          <div className="list">
+            {articles.map((a) => {
+              const artStocks = getStocksForArticle(a.name);
+              const isExpanded = expanded === a.name;
+              return (
+                <div key={a.id} className="list-item" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
+                  <div
+                    style={{ display: 'flex', justifyContent: 'space-between', cursor: artStocks.length ? 'pointer' : 'default' }}
+                    onClick={() => artStocks.length && setExpanded(isExpanded ? null : a.name)}
+                  >
+                    <div className="list-item-main">
+                      <div className="list-item-title">{a.name}</div>
+                      <div className="list-item-sub">
+                        FBS: <strong>{a.plan_fbs_per_day}</strong>/день •
+                        Продажи: <strong>{a.avg_daily_sales != null ? a.avg_daily_sales.toFixed(1) : '—'}</strong>/день •
+                        Остаток: <strong>{a.total_stock}</strong> шт
+                      </div>
+                    </div>
+                    {artStocks.length > 0 && (
+                      <span style={{ color: 'var(--hint-color)', fontSize: 12 }}>{isExpanded ? '▼' : '▶'}</span>
+                    )}
+                  </div>
+
+                  {isExpanded && artStocks.length > 0 && (
+                    <div className="stock-details">
+                      {artStocks.map((s, i) => (
+                        <div key={i} className="stock-row">
+                          <span className="muted">{s.warehouse_name}</span>
+                          <span>{s.quantity} шт</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 

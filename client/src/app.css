@@ -357,3 +357,16 @@ tr:last-child td { border-bottom: none; }
 
 .inline-form > * { flex: 1; }
 .inline-form > button { flex: none; }
+
+.stock-details {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.stock-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 0.85rem;
+}

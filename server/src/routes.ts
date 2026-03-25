@@ -399,7 +399,95 @@ apiRouter.get('/forecast', requireTelegramAdmin, (_req, res) => {
   res.json({ ok: true, days, articles: articles.length, employees: employees.length });
 });
 
-// ============== WB SYNC ==============
+// ============== ARTICLES SUMMARY ==============
+apiRouter.get('/articles-summary', requireTelegramAdmin, (_req, res) => {
+  const db = getDb();
+  const articles = db
+    .prepare(
+      `SELECT
+         a.id, a.name, a.pay_per_unit, a.plan_fbs_per_day, a.avg_daily_sales, a.wb_synced_at,
+         COALESCE(SUM(s.quantity), 0) as total_stock
+       FROM articles a
+       LEFT JOIN stocks s ON s.article_name = a.name
+       GROUP BY a.id
+       ORDER BY a.avg_daily_sales DESC NULLS LAST`,
+    )
+    .all();
+  res.json({ ok: true, articles });
+});
+
+apiRouter.get('/stocks', requireTelegramAdmin, (_req, res) => {
+  const db = getDb();
+  const stocks = db
+    .prepare('SELECT article_name, warehouse_name, quantity, updated_at FROM stocks ORDER BY article_name, warehouse_name')
+    .all();
+  res.json({ ok: true, stocks });
+});
+
+// ============== WB SYNC STOCKS ==============
+apiRouter.post('/admin/sync-wb-stocks', requireTelegramAdmin, async (_req, res) => {
+  const db = getDb();
+  const tokenRow = db.prepare("SELECT value FROM settings WHERE key = 'wb_token'").get() as { value: string } | undefined;
+  const token = tokenRow?.value || process.env.WB_API_TOKEN || '';
+
+  if (!token) {
+    res.status(400).json({ ok: false, error: 'WB токен не задан' });
+    return;
+  }
+
+  try {
+    const dateFrom = '2019-01-01';
+    const url = `https://statistics-api.wildberries.ru/api/v1/supplier/stocks?dateFrom=${dateFrom}`;
+    const response = await fetch(url, {
+      headers: { Authorization: token, 'Content-Type': 'application/json' },
+    });
+
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(`WB stocks HTTP ${response.status}: ${text.slice(0, 300)}`);
+    }
+
+    const data = (await response.json()) as {
+      supplierArticle?: string;
+      warehouseName?: string;
+      quantity?: number;
+    }[];
+
+    if (!Array.isArray(data)) {
+      res.json({ ok: true, updated: 0, message: 'Нет данных' });
+      return;
+    }
+
+    const stmt = db.prepare(
+      `INSERT INTO stocks (article_name, warehouse_name, quantity, updated_at)
+       VALUES (?, ?, ?, datetime('now'))
+       ON CONFLICT(article_name, warehouse_name) DO UPDATE SET
+         quantity = excluded.quantity, updated_at = datetime('now')`,
+    );
+
+    const articlesSet = new Set(
+      (db.prepare('SELECT name FROM articles').all() as { name: string }[]).map((r) => r.name.toLowerCase()),
+    );
+
+    let updated = 0;
+    const tx = db.transaction(() => {
+      for (const row of data) {
+        const art = (row.supplierArticle || '').trim();
+        if (!art || !articlesSet.has(art.toLowerCase())) continue;
+        stmt.run(art, row.warehouseName || 'Неизвестный', row.quantity || 0);
+        updated++;
+      }
+    });
+    tx();
+
+    res.json({ ok: true, updated, total: data.length });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    res.status(502).json({ ok: false, error: msg });
+  }
+});
+
+// ============== WB SYNC SALES ==============
 apiRouter.post('/admin/sync-wb-sales', requireTelegramAdmin, async (_req, res) => {
   const db = getDb();
   const tokenRow = db.prepare("SELECT value FROM settings WHERE key = 'wb_token'").get() as { value: string } | undefined;

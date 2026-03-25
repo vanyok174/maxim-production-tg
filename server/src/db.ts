@@ -80,6 +80,15 @@ export function initDb(): Database.Database {
     );
 
     CREATE INDEX IF NOT EXISTS idx_schedule_date ON schedule(work_date);
+
+    CREATE TABLE IF NOT EXISTS stocks (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      article_name TEXT NOT NULL,
+      warehouse_name TEXT,
+      quantity REAL NOT NULL DEFAULT 0,
+      updated_at TEXT DEFAULT (datetime('now')),
+      UNIQUE(article_name, warehouse_name)
+    );
   `);
 
   return _db;
