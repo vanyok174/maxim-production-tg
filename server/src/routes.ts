@@ -444,6 +444,57 @@ apiRouter.post('/admin/sync-wb-sales', requireTelegramAdmin, async (_req, res) =
   }
 });
 
+// ============== IMPORT FULL DATA ==============
+apiRouter.post('/admin/import-full', requireTelegramAdmin, (req, res) => {
+  const db = getDb();
+  const { assemblies, shipments, schedule } = req.body as {
+    assemblies?: { assembly_date: string; employee_name: string; article_name: string; qty: number; confirmed: boolean; pay_per_unit: number; amount: number }[];
+    shipments?: { shipment_type: string; shipment_date: string; article_name: string; qty: number }[];
+    schedule?: { employee_name: string; work_date: string; is_working: boolean }[];
+  };
+
+  const insAssembly = db.prepare(
+    `INSERT INTO assemblies (assembly_date, employee_name, article_name, qty, confirmed, pay_per_unit, amount)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+  );
+  const insShipment = db.prepare(
+    `INSERT INTO shipments (shipment_type, shipment_date, article_name, qty) VALUES (?, ?, ?, ?)`,
+  );
+  const insSchedule = db.prepare(
+    `INSERT INTO schedule (employee_name, work_date, is_working) VALUES (?, ?, ?)
+     ON CONFLICT(employee_name, work_date) DO UPDATE SET is_working = excluded.is_working`,
+  );
+
+  let aCount = 0, sCount = 0, schCount = 0;
+
+  const tx = db.transaction(() => {
+    if (assemblies) {
+      for (const a of assemblies) {
+        if (!a.article_name || !a.assembly_date) continue;
+        insAssembly.run(a.assembly_date, a.employee_name || '', a.article_name, a.qty || 0, a.confirmed ? 1 : 0, a.pay_per_unit || 0, a.amount || 0);
+        aCount++;
+      }
+    }
+    if (shipments) {
+      for (const s of shipments) {
+        if (!s.article_name || !s.shipment_date) continue;
+        insShipment.run(s.shipment_type || 'FBO', s.shipment_date, s.article_name, s.qty || 0);
+        sCount++;
+      }
+    }
+    if (schedule) {
+      for (const sc of schedule) {
+        if (!sc.employee_name || !sc.work_date) continue;
+        insSchedule.run(sc.employee_name, sc.work_date, sc.is_working ? 1 : 0);
+        schCount++;
+      }
+    }
+  });
+  tx();
+
+  res.json({ ok: true, assemblies: aCount, shipments: sCount, schedule: schCount });
+});
+
 // ============== IMPORT ==============
 apiRouter.post('/admin/import', requireTelegramAdmin, (req, res) => {
   const db = getDb();
