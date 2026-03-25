@@ -42,6 +42,14 @@ h2 { font-size: 1rem; margin: 16px 0 8px; font-weight: 600; }
   border: 1px solid var(--border);
 }
 
+.card > *:last-child {
+  margin-bottom: 0;
+}
+
+.card label {
+  margin-bottom: 6px;
+}
+
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -70,7 +78,6 @@ select, input[type='date'], input[type='text'], input[type='number'], input[type
   background: var(--bg);
   color: inherit;
   font-size: 1rem;
-  margin-bottom: 10px;
 }
 
 textarea { resize: vertical; min-height: 80px; }
@@ -121,14 +128,16 @@ button.small {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-  align-items: end;
+  align-items: start;
+  margin-bottom: 12px;
 }
 
 .row3 {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 10px;
-  align-items: end;
+  align-items: start;
+  margin-bottom: 12px;
 }
 
 .form-grid-4 {
@@ -370,10 +379,23 @@ table.compact td {
   display: flex;
   gap: 8px;
   align-items: flex-end;
+  margin-bottom: 12px;
 }
 
 .inline-form > * { flex: 1; }
 .inline-form > button { flex: none; }
+
+.add-form {
+  display: grid;
+  grid-template-columns: 1fr 80px auto;
+  gap: 8px;
+  align-items: end;
+  margin-bottom: 12px;
+}
+
+.add-form-main { }
+.add-form-num { }
+.add-form button { align-self: end; }
 
 .btn-row {
   display: flex;
@@ -389,10 +411,5 @@ table.compact td {
   grid-template-columns: 1fr 80px auto;
   gap: 8px;
   align-items: center;
-  margin-bottom: 8px;
-}
-
-.assembly-line select,
-.assembly-line input {
-  margin-bottom: 0;
+  margin-bottom: 10px;
 }

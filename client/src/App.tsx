@@ -347,19 +347,19 @@ function EmployeesTab({ employees, onChange }: { employees: Employee[]; onChange
 
   return (
     <div className="card">
-      <div className="inline-form">
-        <div>
+      <div className="add-form">
+        <div className="add-form-main">
           <label>Имя</label>
           <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Имя" />
         </div>
-        <div style={{ width: 100 }}>
+        <div className="add-form-num">
           <label>Произв.</label>
-          <input type="number" value={prod} onChange={(e) => setProd(e.target.value)} placeholder="шт/день" />
+          <input type="number" value={prod} onChange={(e) => setProd(e.target.value)} placeholder="шт" />
         </div>
         <button onClick={add}>+</button>
       </div>
 
-      <div className="list" style={{ marginTop: 12 }}>
+      <div className="list">
         {employees.map((e) => (
           <div key={e.id} className="list-item">
             <div className="list-item-main">
@@ -394,19 +394,19 @@ function ArticlesTab({ articles, onChange }: { articles: Article[]; onChange: ()
 
   return (
     <div className="card">
-      <div className="inline-form">
-        <div>
+      <div className="add-form">
+        <div className="add-form-main">
           <label>Артикул</label>
           <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Код" />
         </div>
-        <div style={{ width: 80 }}>
+        <div className="add-form-num">
           <label>Оплата</label>
           <input type="number" value={pay} onChange={(e) => setPay(e.target.value)} placeholder="₽" />
         </div>
         <button onClick={add}>+</button>
       </div>
 
-      <div className="list" style={{ marginTop: 12 }}>
+      <div className="list">
         {articles.map((a) => (
           <div key={a.id} className="list-item">
             <div className="list-item-main">
