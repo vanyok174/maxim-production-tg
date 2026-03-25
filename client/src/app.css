@@ -112,8 +112,12 @@ button.small {
 }
 
 button.full-width {
+  display: block;
   width: 100%;
-  margin-top: 12px;
+}
+
+.form-row + button.full-width {
+  margin-top: 0;
 }
 
 .actions {
@@ -130,17 +134,24 @@ button.full-width {
   margin-bottom: 12px;
 }
 
-.form-row > * {
-  flex: 1;
-  min-width: 0;
-}
-
-.form-row .field-small {
-  flex: 0 0 90px;
+.form-row:last-child {
+  margin-bottom: 0;
 }
 
 .field {
+  flex: 1 1 0;
   min-width: 0;
+}
+
+.field > label {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.field > select,
+.field > input {
+  display: block;
+  width: 100%;
 }
 
 .assembly-line {
